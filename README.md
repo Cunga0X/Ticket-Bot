@@ -24,13 +24,12 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
   <a href="https://github.com/Cunga0X/Ticket-Bot">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="https://www.slomc.si/img/logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Tickets</h3>
@@ -85,8 +84,8 @@ soon
 
 ### Built With
 
-- [![Express][Express.js]][https://expressjs.com/]
-- [![DiscordJS][Discord.js]][https://discord.js.org/]
+- [Express.js][https://expressjs.com/]
+- [Discord.js][https://discord.js.org/]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
