@@ -2,9 +2,9 @@ const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, ChatInputComman
 const Ticket = require("../../Models/Ticket.js");
 
 module.exports = {
-  name: "support-setup",
+  name: "setup",
   description: "Support Ticket System setup",
-  category: "Moderation",
+  category: "Tickets",
   UserPerms: ["ManageGuild"],
   options: [
     {

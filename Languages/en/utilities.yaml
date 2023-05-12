@@ -13,8 +13,8 @@ help_category: "%{category}"
 help_timeout: "```Help Menu timed out try using %{prefix}help again.```"
 
 ##Close
-ticket_closing: "🗑️ ・ Prijava bo zaprta čez `%{time}`"
+ticket_closing: "🗑️ ・ Ticket will be closed in `%{time}`"
 ticket_saved: "Ticket saved"
 opened_by: "Opened by:"
-closed_by: "Closed by":
+closed_by: "Closed by:"
 invalid_channel: "⚠️ ・ You can only use this command in ticket channel"

@@ -20,3 +20,9 @@ support_manager_error: "⚠️ ・ Napaka, Ne najdem **`Support-Ticket Sistema`*
 support_manager_success: "✅ ・ **`Support-Ticket-Manager`** uspešno dodan"
 support_manager_on: "✅ ・ Support-Tickets Turned **`On`**"
 support_manager_off: "✅ ・ Support-Tickets Turned **`Off`**"
+
+##Lock/Unlock Button
+ticket_locked: "🔒 ・ Prijava zaklenjena, odstranjena bo po pregledu"
+ticket_unlocked: "🔓 ・ Prijava odklenjena"
+unlock_label: "Odkleni"
+lock_label: "Zakleni"

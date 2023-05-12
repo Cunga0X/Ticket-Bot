@@ -8,7 +8,7 @@ const { TICKETS_HISTORY, FQDM } = require("../../config.js");
 module.exports = {
   name: "close",
   description: "Close the ticket",
-  category: "Moderation",
+  category: "Tickets",
   UserPerms: ["ManageGuild"],
   options: [
     {
@@ -23,7 +23,7 @@ module.exports = {
    * @param {Client} client
    * @param {ChatInputCommandInteraction} interaction
    */
-  async execute(interaction, client) {
+  async execute(interaction, client, language) {
     const { guild, channel, user } = interaction;
     Ticket.findOne({ Guild: guild.id, Ticket: "support-ticket-message" }, async (err, data) => {
       try {

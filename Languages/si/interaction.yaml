@@ -1,0 +1,4 @@
+## Command interactions
+no_command_error: "Napaka!"
+user_missing_perm: "Potrebuješ **`%user_perm`** dovoljenje za uporabo tega ukaza!"
+bot_missing_perm: "Potrebujem **`bot_perm`** dovoljenje za uporabo tega ukaza!"

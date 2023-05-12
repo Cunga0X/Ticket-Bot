@@ -4,7 +4,6 @@ const Reply = require("../../Systems/Reply");
 const GLang = require("../../Models/Language.js");
 const Staff = require("../../Models/Staff");
 const Ticket = require("../../Models/Ticket");
-const { createTranscript } = require("discord-html-transcripts");
 
 module.exports = {
   name: "interactionCreate",
@@ -57,11 +56,12 @@ module.exports = {
       if (customId == "lock") {
         try {
           await Ticket.findOne({ Guild: guild.id, MessageID: message.id }, async (err, data) => {
-            const supportRole = data.SupportRole;
             const channelid = interaction.channel.id;
             const channel = client.channels.cache.get(channelid);
             const userid = data.CreatorID;
             await channel.setName(`zaprl-${interaction.user.username}`);
+            const main = await Ticket.findOne({ Guild: guild.id, Ticket: "support-ticket-message" });
+            const supportRole = main.SupportRole;
             await channel.permissionOverwrites.set([
               {
                 id: interaction.guild.id,
@@ -78,12 +78,16 @@ module.exports = {
                 deny: [PermissionsBitField.Flags.SendMessages],
               },
             ]);
-            const embed = new EmbedBuilder().setColor("Yellow").setDescription("🔒 ・ Prijava zaklenjena, zaprta bo po pregledu.");
+            const embed = new EmbedBuilder().setColor("Yellow").setDescription(`${client.i18n.get(language, "tickets", "ticket_locked")}`);
             const unlock = new ActionRowBuilder();
-            unlock.addComponents(new ButtonBuilder().setCustomId("unlock").setLabel("Odkleni").setStyle("Secondary").setEmoji("🔓"));
-            channel.send({ embeds: [embed] });
-            const reply = new EmbedBuilder().setColor("Green").setDescription("✅ ・ Prijava uspešno zaklenjena");
-            interaction.reply({ embeds: [reply], ephemeral: true });
+            unlock.addComponents(
+              new ButtonBuilder()
+                .setCustomId("unlock")
+                .setLabel(`${client.i18n.get(language, "tickets", "unlock_label")}`)
+                .setStyle("Secondary")
+                .setEmoji("🔓"),
+            );
+            interaction.reply({ embeds: [embed] });
             const initialMessageID = data.MessageID;
             const initialMessage = await channel.messages.fetch(initialMessageID);
             initialMessage.edit({ components: [unlock] });
@@ -95,11 +99,12 @@ module.exports = {
       if (customId == "unlock") {
         try {
           await Ticket.findOne({ Guild: guild.id, MessageID: message.id }, async (err, data) => {
-            const supportRole = data.SupportRole;
             const channelid = interaction.channel.id;
             const channel = client.channels.cache.get(channelid);
             const userid = data.CreatorID;
             await channel.setName(`odprto-${interaction.user.username}`);
+            const main = await Ticket.findOne({ Guild: guild.id, Ticket: "support-ticket-message" });
+            const supportRole = main.SupportRole;
             await channel.permissionOverwrites.set([
               {
                 id: interaction.guild.id,
@@ -114,12 +119,16 @@ module.exports = {
                 allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.SendMessages],
               },
             ]);
-            const embed = new EmbedBuilder().setColor("Yellow").setDescription("🔓 ・ Prijava odklenjena.");
+            const embed = new EmbedBuilder().setColor("Yellow").setDescription(`${client.i18n.get(language, "tickets", "ticket_unlocked")}`);
             const unlock = new ActionRowBuilder();
-            unlock.addComponents(new ButtonBuilder().setCustomId("lock").setLabel("Zakleni").setStyle("Secondary").setEmoji("🔒"));
-            channel.send({ embeds: [embed] });
-            const reply = new EmbedBuilder().setColor("Green").setDescription("✅ ・ Prijava uspešno odklenjena");
-            interaction.reply({ embeds: [reply], ephemeral: true });
+            unlock.addComponents(
+              new ButtonBuilder()
+                .setCustomId("lock")
+                .setLabel(`${client.i18n.get(language, "tickets", "lock_label")}`)
+                .setStyle("Secondary")
+                .setEmoji("🔒"),
+            );
+            interaction.reply({ embeds: [embed] });
             const initialMessageID = data.MessageID;
             const initialMessage = await channel.messages.fetch(initialMessageID);
             initialMessage.edit({ components: [unlock] });
@@ -133,7 +142,7 @@ module.exports = {
           switch (customId) {
             case "support-ticket-enable":
               await Ticket.findOne({ Guild: guild.id, Ticket: "support-ticket-message" }, async (err, data) => {
-                if (!data) return Reply(interaction, "Red", "❌", "No Ticket system found", true);
+                if (!data) return interaction.reply(`${client.i18n.get(language, "tickets", "error")}`);
                 const channelid = data.ChannelID;
                 const messageid = data.MessageID;
                 try {
@@ -170,15 +179,15 @@ module.exports = {
                   setTimeout(() => {
                     m.delete();
                   }, 4000);
-                } catch (error) {
-                  console.error(error);
+                } catch (err) {
+                  console.error(err);
                 }
               });
 
               break;
             case "ticket-disable":
               await Ticket.findOne({ Guild: guild.id, Ticket: "support-ticket-message" }, async (err, data) => {
-                if (!data) return Reply(interaction, "Red", "❌", "No Ticket system found", true);
+                if (!data) return interaction.reply(`${client.i18n.get(language, "tickets", "error")}`);
                 const messageid = data.MessageID;
                 const channelid = data.ChannelID;
 
@@ -186,7 +195,7 @@ module.exports = {
                   const channel = client.channels.cache.get(channelid);
                   const message = await channel.messages.fetch(messageid);
                   const embed = message.embeds[0];
-                  if (!embed) return Reply(interaction, "Red", "❌", "No embed was found!", true);
+                  if (!embed) return interaction.reply(`${client.i18n.get(language, "tickets", "error")}`);
                   const embedOff = new EmbedBuilder().setTitle("Potrebuješ pomoč?").setDescription("Prijave so trenutno zaprte!").setColor("Red");
 
                   await message.edit({ embeds: [embedOff], components: [] });
@@ -198,215 +207,6 @@ module.exports = {
               break;
           }
         });
-      }
-      if (customId == "builder-sprejmi" || customId == "builder-zavrni") {
-        switch (customId) {
-          case "builder-sprejmi":
-            await Staff.findOne({ Guild: guildId, MessageID: message.id }, async (err, data) => {
-              if (!data) return Reply(interaction, "Red", "❌", "No Ticket found", true);
-              const messageid = data.MessageID;
-              const userid = data.UserID;
-              const username = data.Username;
-              let channel = await interaction.guild.channels.create({
-                name: `trial-builder-${username}`,
-                type: ChannelType.GuildText,
-                parent: "1089220607096410223",
-                permissionOverwrites: [
-                  {
-                    id: interaction.guild.id,
-                    deny: [PermissionsBitField.Flags.ViewChannel],
-                  },
-                  {
-                    id: userid,
-                    allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory],
-                  },
-                  {
-                    id: "1103762471061299270",
-                    allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory],
-                  },
-                ],
-              });
-              const embed = new EmbedBuilder().setTitle(`Pozdravljen ${username}`).setColor("Green").setDescription("Kontaktirali smo te glede tvoje Builder prijave in sicer potrebovali bi nekaj slik tvojih kreacij.");
-              const msg = await channel.send({ content: `<@${userid}>`, embeds: [embed], components: [] });
-              Staff.findOneAndUpdate({ Guild: guildId, Message: messageid }, { TicketID: channel.id, TicketMessageID: msg.id });
-              Reply(interaction, "Green", "✅", `Trial-Builder ${username} sprejet.`);
-            });
-
-            break;
-          case "builder-zavrni":
-            await Staff.findOne({ Guild: guildId, MessageID: message.id }, async (err, data) => {
-              if (!data) return Reply(interaction, "Red", "❌", "No Ticket found", true);
-              const messageid = data.MessageID;
-              const userid = data.UserID;
-              const username = data.Username;
-              let channel = await interaction.guild.channels.create({
-                name: `zavrnjen-${username}`,
-                type: ChannelType.GuildText,
-                parent: "1089220607096410223",
-                permissionOverwrites: [
-                  {
-                    id: interaction.guild.id,
-                    deny: [PermissionsBitField.Flags.ViewChannel],
-                  },
-                  {
-                    id: userid,
-                    allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory],
-                  },
-                  {
-                    id: "1103762471061299270",
-                    allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory],
-                  },
-                ],
-              });
-              const embed = new EmbedBuilder().setTitle(`Pozdravljen ${username}`).setColor("Red").setDescription("Kontaktirali smo te glede tvoje Builder prijave in smo se odločili, da tvojo prijavo zavrnemo. Lep pozdrav, osebje SloMc");
-              const msg = await channel.send({ content: `<@${userid}>`, embeds: [embed], components: [] });
-              Staff.findOneAndUpdate({ Guild: guildId, Message: messageid }, { TicketID: channel.id, TicketMessageID: msg.id });
-              Reply(interaction, "Green", "✅", `Trial-Builder ${username} zavrnjen.`);
-            });
-            break;
-        }
-      }
-      if (customId == "helper-sprejmi" || customId == "helper-zavrni") {
-        switch (customId) {
-          case "helper-sprejmi":
-            await Staff.findOne({ Guild: guildId, MessageID: message.id }, async (err, data) => {
-              if (!data) return Reply(interaction, "Red", "❌", "No Ticket found", true);
-              const messageid = data.MessageID;
-              const userid = data.UserID;
-              const username = data.Username;
-              let channel = await interaction.guild.channels.create({
-                name: `trial-helper-${username}`,
-                type: ChannelType.GuildText,
-                parent: "1089220607096410223",
-                permissionOverwrites: [
-                  {
-                    id: interaction.guild.id,
-                    deny: [PermissionsBitField.Flags.ViewChannel],
-                  },
-                  {
-                    id: userid,
-                    allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory],
-                  },
-                  {
-                    id: "1103762471061299270",
-                    allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory],
-                  },
-                ],
-              });
-              const embed = new EmbedBuilder()
-                .setTitle(`Pozdravljen ${username}`)
-                .setColor("Green")
-                .setDescription(
-                  "Kontaktirali smo te glede tvoje Helper prijave in smo se odločili, da te sprejmemo kot Trail-Helperja. Več stvari ti bomo objasnili v klicu. Prosim, da nam sporčiš kdaj imaš čas, da se pogovorimo. Dobrodošel v ekipo",
-                );
-              const msg = await channel.send({ content: `<@${userid}>`, embeds: [embed], components: [] });
-              Staff.findOneAndUpdate({ Guild: guildId, Message: messageid }, { TicketID: channel.id, TicketMessageID: msg.id });
-              Reply(interaction, "Green", "✅", `Trial-Helper ${username} sprejet.`);
-            });
-
-            break;
-          case "helper-zavrni":
-            await Staff.findOne({ Guild: guildId, MessageID: message.id }, async (err, data) => {
-              if (!data) return Reply(interaction, "Red", "❌", "No Ticket found", true);
-              const messageid = data.MessageID;
-              const userid = data.UserID;
-              const username = data.Username;
-              let channel = await interaction.guild.channels.create({
-                name: `zavrnjen-${username}`,
-                type: ChannelType.GuildText,
-                parent: "1089220607096410223",
-                permissionOverwrites: [
-                  {
-                    id: interaction.guild.id,
-                    deny: [PermissionsBitField.Flags.ViewChannel],
-                  },
-                  {
-                    id: userid,
-                    allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory],
-                  },
-                  {
-                    id: "1103762471061299270",
-                    allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory],
-                  },
-                ],
-              });
-              const embed = new EmbedBuilder().setTitle(`Pozdravljen ${username}`).setColor("Red").setDescription("Kontaktirali smo te glede tvoje Helper prijave in smo se odločili, da tvojo prijavo zavrnemo. Lep pozdrav, osebje SloMc");
-              const msg = await channel.send({ content: `<@${userid}>`, embeds: [embed], components: [] });
-              Staff.findOneAndUpdate({ Guild: guildId, Message: messageid }, { TicketID: channel.id, TicketMessageID: msg.id });
-              Reply(interaction, "Green", "✅", `Trial-Helper ${username} zavrnjen.`);
-            });
-            break;
-        }
-      }
-      if (customId == "dev-sprejmi" || customId == "dev-zavrni") {
-        switch (customId) {
-          case "dev-sprejmi":
-            await Staff.findOne({ Guild: guildId, MessageID: message.id }, async (err, data) => {
-              if (!data) return Reply(interaction, "Red", "❌", "No Ticket found", true);
-              const messageid = data.MessageID;
-              const userid = data.UserID;
-              const username = data.Username;
-              let channel = await interaction.guild.channels.create({
-                name: `trial-dev-${username}`,
-                type: ChannelType.GuildText,
-                parent: "1089220607096410223",
-                permissionOverwrites: [
-                  {
-                    id: interaction.guild.id,
-                    deny: [PermissionsBitField.Flags.ViewChannel],
-                  },
-                  {
-                    id: userid,
-                    allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory],
-                  },
-                  {
-                    id: "1103762471061299270",
-                    allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory],
-                  },
-                ],
-              });
-              const embed = new EmbedBuilder()
-                .setTitle(`Pozdravljen ${username}`)
-                .setColor("Green")
-                .setDescription("Kontaktirali smo te glede tvoje Developer prijave in smo se odločili, da ti bomo pripravili manjšo nalogo. Kmalu te kontaktiramo in ti jo predstavimo. Lep Pozdrav, Osebje SloMc");
-              const msg = await channel.send({ content: `<@${userid}>`, embeds: [embed], components: [] });
-              Staff.findOneAndUpdate({ Guild: guildId, Message: messageid }, { TicketID: channel.id, TicketMessageID: msg.id });
-              Reply(interaction, "Green", "✅", `Trial-Developer ${username} sprejet.`);
-            });
-
-            break;
-          case "dev-zavrni":
-            await Staff.findOne({ Guild: guildId, MessageID: message.id }, async (err, data) => {
-              if (!data) return Reply(interaction, "Red", "❌", "No Ticket found", true);
-              const messageid = data.MessageID;
-              const userid = data.UserID;
-              const username = data.Username;
-              let channel = await interaction.guild.channels.create({
-                name: `zavrnjen-${username}`,
-                type: ChannelType.GuildText,
-                parent: "1089220607096410223",
-                permissionOverwrites: [
-                  {
-                    id: interaction.guild.id,
-                    deny: [PermissionsBitField.Flags.ViewChannel],
-                  },
-                  {
-                    id: userid,
-                    allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory],
-                  },
-                  {
-                    id: "1103762471061299270",
-                    allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory],
-                  },
-                ],
-              });
-              const embed = new EmbedBuilder().setTitle(`Pozdravljen ${username}`).setColor("Red").setDescription("Kontaktirali smo te glede tvoje Developer prijave in smo se odločili, da tvojo prijavo zavrnemo. Lep pozdrav, osebje SloMc");
-              const msg = await channel.send({ content: `<@${userid}>`, embeds: [embed], components: [] });
-              Staff.findOneAndUpdate({ Guild: guildId, Message: messageid }, { TicketID: channel.id, TicketMessageID: msg.id });
-              Reply(interaction, "Green", "✅", `Trial-Developer ${username} zavrnjen.`);
-            });
-            break;
-        }
       }
     }
     //! String Menu Interactions
@@ -485,88 +285,6 @@ module.exports = {
             Ticket.findOne({ Guild: guildId, MessageID: message.id, Ticket: "first" }, async (err, data) => {
               message.edit({ content: null });
             });
-            break;
-        }
-      }
-      if (customId == "select-staff") {
-        let selected = interaction.values[0];
-        switch (selected) {
-          case "helper":
-            if (interaction.isButton()) return;
-            if (interaction.isChatInputCommand()) return;
-
-            const modalHelper = new ModalBuilder().setCustomId("helper").setTitle("Prosimo, da nam posredujete več informacij");
-
-            const nameMChelper = new TextInputBuilder().setCustomId("nameMChelper").setLabel("Vaše Minecraft ime").setStyle(TextInputStyle.Short).setRequired(true).setPlaceholder("Jože").setMaxLength(400);
-
-            const izkusnjeHelper = new TextInputBuilder().setCustomId("izkusnjeHelper").setLabel("Vaše dosedanje izkušnje").setStyle(TextInputStyle.Paragraph).setRequired(true).setMinLength(30).setMaxLength(4000);
-
-            const zakajHelper = new TextInputBuilder().setCustomId("zakajHelper").setLabel("Zakaj bi izbrali ravno tebe?").setStyle(TextInputStyle.Paragraph).setRequired(true).setMinLength(30).setMaxLength(1024);
-
-            const firstActionRowH = new ActionRowBuilder().addComponents(nameMChelper);
-            const secondActionRowH = new ActionRowBuilder().addComponents(izkusnjeHelper);
-            const thirdActionRowH = new ActionRowBuilder().addComponents(zakajHelper);
-
-            modalHelper.addComponents(firstActionRowH, secondActionRowH, thirdActionRowH);
-
-            await interaction.showModal(modalHelper);
-            Ticket.findOne({ Guild: guildId, MessageID: message.id, Ticket: "staff-first" }, async (err, data) => {
-              message.edit({ content: null });
-            });
-            break;
-          case "builder":
-            if (interaction.isButton()) return;
-            if (interaction.isChatInputCommand()) return;
-
-            const modalBuilder = new ModalBuilder().setCustomId("builder").setTitle("Prosimo, da nam posredujete več informacij");
-
-            const nameMCbuilder = new TextInputBuilder().setCustomId("nameMCbuilder").setLabel("Vaše Minecraft ime").setStyle(TextInputStyle.Short).setRequired(true).setPlaceholder("Jože").setMaxLength(400);
-
-            const izkusnjeBuilder = new TextInputBuilder().setCustomId("izkusnjeBuilder").setLabel("Vaše dosedanje izkušnje").setStyle(TextInputStyle.Paragraph).setRequired(true).setMinLength(30).setMaxLength(4000);
-
-            const zakajBuilder = new TextInputBuilder().setCustomId("zakajBuilder").setLabel("Zakaj bi izbrali ravno tebe?").setStyle(TextInputStyle.Paragraph).setRequired(true).setMinLength(30).setMaxLength(1024);
-
-            const stilBuilder = new TextInputBuilder().setCustomId("stilBuilder").setLabel("Vaš stil grajenja").setStyle(TextInputStyle.Short).setRequired(true).setPlaceholder("Mesta, Spawni, itd.").setMaxLength(400);
-
-            const firstActionRowB = new ActionRowBuilder().addComponents(nameMCbuilder);
-            const secondActionRowB = new ActionRowBuilder().addComponents(izkusnjeBuilder);
-            const thirdActionRowB = new ActionRowBuilder().addComponents(zakajBuilder);
-            const fourthActionRowB = new ActionRowBuilder().addComponents(stilBuilder);
-
-            modalBuilder.addComponents(firstActionRowB, secondActionRowB, thirdActionRowB, fourthActionRowB);
-
-            await interaction.showModal(modalBuilder);
-            Ticket.findOne({ Guild: guildId, MessageID: message.id, Ticket: "staff-first" }, async (err, data) => {
-              message.edit({ content: null });
-            });
-            break;
-
-          case "developer":
-            if (interaction.isButton()) return;
-            if (interaction.isChatInputCommand()) return;
-
-            const modalDeveloper = new ModalBuilder().setCustomId("dev").setTitle("Prosimo, da nam posredujete več informacij");
-
-            const izkusnjeDeveloper = new TextInputBuilder().setCustomId("izkusnjeDev").setLabel("Vaše dosedanje izkušnje").setStyle(TextInputStyle.Paragraph).setRequired(true).setMinLength(30).setMaxLength(4000);
-
-            const zakajDeveloper = new TextInputBuilder().setCustomId("zakajDev").setLabel("Zakaj bi izbrali ravno tebe?").setStyle(TextInputStyle.Paragraph).setRequired(true).setMinLength(30).setMaxLength(1024);
-
-            const langDeveloper = new TextInputBuilder().setCustomId("langDev").setLabel("V katerih jezikih najpogosteje delate?").setStyle(TextInputStyle.Short).setRequired(true).setPlaceholder("Java, C#, C++, Js, itd.").setMaxLength(400);
-
-            const portfolio = new TextInputBuilder().setCustomId("portDev").setLabel("Link do vašega porfolia").setStyle(TextInputStyle.Short).setPlaceholder("Github, Website, itd.").setMaxLength(400);
-
-            const secondActionRowD = new ActionRowBuilder().addComponents(izkusnjeDeveloper);
-            const thirdActionRowD = new ActionRowBuilder().addComponents(zakajDeveloper);
-            const fourthActionRowD = new ActionRowBuilder().addComponents(langDeveloper);
-            const fifthActionRowD = new ActionRowBuilder().addComponents(portfolio);
-
-            modalDeveloper.addComponents(secondActionRowD, thirdActionRowD, fourthActionRowD, fifthActionRowD);
-
-            await interaction.showModal(modalDeveloper);
-            Ticket.findOne({ Guild: guildId, MessageID: message.id, Ticket: "staff-first" }, async (err, data) => {
-              message.edit({ content: null });
-            });
-
             break;
         }
       }
@@ -752,136 +470,6 @@ module.exports = {
             }
           });
 
-          break;
-        case "helper":
-          const nameMChelper = fields.getTextInputValue("nameMChelper");
-          const izkusnjeHelper = fields.getTextInputValue("izkusnjeHelper");
-          const zakajHelper = fields.getTextInputValue("zakajHelper");
-
-          const embedH = new EmbedBuilder()
-            .setAuthor({ name: `Nova Helper Prijava: ${interaction.user.tag}`, iconURL: "https://cdn.discordapp.com/attachments/1047634549644992624/1089644324435795988/sos.png" })
-            .setThumbnail(`https://cdn.discordapp.com/attachments/1047634549644992624/1089456752430419968/slimey.png`)
-            .setColor("Green")
-            .setTitle("Izkušnje:")
-            .setDescription(`${izkusnjeHelper}`)
-            .addFields({ name: `Zakaj misli, da je primeren:`, value: `${zakajHelper}` })
-            .addFields({ name: `Ime v Minecraftu:`, value: `${nameMChelper}` });
-
-          const buttonsH = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setCustomId("helper-sprejmi").setLabel("Sprejmi Trial-Helper").setStyle(ButtonStyle.Success),
-            new ButtonBuilder().setCustomId("helper-zavrni").setLabel("Zavrni").setStyle(ButtonStyle.Danger),
-          );
-
-          await Ticket.findOne({ Guild: guildId, Ticket: "staff-first" }, async (err, data) => {
-            if (!data) return Reply(interaction, "Red", "❌", "No Staff system found", true);
-            const channelid = data.Notify;
-
-            try {
-              const channel = client.channels.cache.get(channelid);
-
-              const msgH = await channel.send({ embeds: [embedH], components: [buttonsH] });
-              await Staff.create({
-                Guild: guildId,
-                ChannelID: channel,
-                MessageID: msgH.id,
-                TicketID: "None",
-                TicketMessageID: "None",
-                UserID: user.id,
-                Username: user.username,
-              });
-              Reply(interaction, "Green", "✅", "Vaša prijava je oddana.", true);
-            } catch (error) {
-              console.error(error);
-            }
-          });
-          break;
-        case "builder":
-          const nameMCbuilder = fields.getTextInputValue("nameMCbuilder");
-          const izkusnjeBuilder = fields.getTextInputValue("izkusnjeBuilder");
-          const zakajBuilder = fields.getTextInputValue("zakajBuilder");
-          const stilBuilder = fields.getTextInputValue("stilBuilder");
-
-          const embedB = new EmbedBuilder()
-            .setAuthor({ name: `Nova Builder Prijava: ${interaction.user.tag}`, iconURL: "https://cdn.discordapp.com/attachments/1047634549644992624/1089645463596187749/builder.png" })
-            .setThumbnail(`https://cdn.discordapp.com/attachments/1047634549644992624/1089456752430419968/slimey.png`)
-            .setColor("Yellow")
-            .setTitle(`Izkušnje:`)
-            .setDescription(`${izkusnjeBuilder}`)
-            .addFields({ name: `Zakaj misli, da je primeren`, value: `${zakajBuilder}` })
-            .addFields({ name: `Stil`, value: `${stilBuilder}` })
-            .addFields({ name: `Ime v MC`, value: `${nameMCbuilder}` });
-
-          const buttonsB = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setCustomId("builder-sprejmi").setLabel("Sprejmi Trial-Builder").setStyle(ButtonStyle.Success),
-            new ButtonBuilder().setCustomId("builder-zavrni").setLabel("Zavrni").setStyle(ButtonStyle.Danger),
-          );
-
-          await Ticket.findOne({ Guild: guildId, Ticket: "staff-first" }, async (err, data) => {
-            if (!data) return Reply(interaction, "Red", "❌", "No Staff system found", true);
-            const channelid = data.Notify;
-
-            try {
-              const channel = client.channels.cache.get(channelid);
-
-              const msgB = await channel.send({ embeds: [embedB], components: [buttonsB] });
-              await Staff.create({
-                Guild: guildId,
-                ChannelID: channel,
-                MessageID: msgB.id,
-                TicketID: "None",
-                TicketMessageID: "None",
-                UserID: user.id,
-                Username: user.username,
-              });
-              Reply(interaction, "Green", "✅", "Vaša prijava je oddana.", true);
-            } catch (error) {
-              console.error(error);
-            }
-          });
-          break;
-        case "dev":
-          const izkusnjeDeveloper = fields.getTextInputValue("izkusnjeDev");
-          const zakajDeveloper = fields.getTextInputValue("zakajDev");
-          const langDeveloper = fields.getTextInputValue("langDev");
-          const portfolio = fields.getTextInputValue("portDev");
-
-          const embedD = new EmbedBuilder()
-            .setAuthor({ name: `Nova Developer Prijava: ${interaction.user.tag}`, iconURL: "https://cdn.discordapp.com/attachments/1047634549644992624/1089646057769668791/dev.png" })
-            .setThumbnail(`https://cdn.discordapp.com/attachments/1047634549644992624/1089456752430419968/slimey.png`)
-            .setColor("LuminousVividPink")
-            .setTitle("Izkušnje:")
-            .setDescription(`${izkusnjeDeveloper}`)
-            .addFields({ name: `Zakaj misli, da je primeren`, value: `${zakajDeveloper}` })
-            .addFields({ name: `Jeziki`, value: `${langDeveloper}` })
-            .addFields({ name: `Portfolio`, value: `${portfolio}` });
-
-          const buttonsD = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setCustomId("dev-sprejmi").setLabel("Sprejmi Trial-Dev").setStyle(ButtonStyle.Success),
-            new ButtonBuilder().setCustomId("dev-zavrni").setLabel("Zavrni").setStyle(ButtonStyle.Danger),
-          );
-
-          await Ticket.findOne({ Guild: guildId, Ticket: "staff-first" }, async (err, data) => {
-            if (!data) return Reply(interaction, "Red", "❌", "No Staff system found", true);
-            const channelid = data.Notify;
-
-            try {
-              const channel = client.channels.cache.get(channelid);
-
-              const msgD = await channel.send({ embeds: [embedD], components: [buttonsD] });
-              await Staff.create({
-                Guild: guildId,
-                ChannelID: channel,
-                MessageID: msgD.id,
-                TicketID: "None",
-                TicketMessageID: "None",
-                UserID: user.id,
-                Username: user.username,
-              });
-              Reply(interaction, "Green", "✅", "Vaša prijava je oddana.", true);
-            } catch (error) {
-              console.error(error);
-            }
-          });
           break;
       }
     }

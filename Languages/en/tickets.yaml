@@ -1,3 +1,6 @@
+##ERROR
+error: "⚠️ ・ An unexpected error occurred during command execution."
+
 ## Support Tickets
 support_ticket_title: "Need Help?"
 support_ticket_message: "Choose ticket category, input necessary data and submit the ticket"
@@ -20,3 +23,9 @@ support_manager_error: "⚠️ ・ Error, Can't find **`Support-Ticket System`**
 support_manager_success: "✅ ・ **`Support-Ticket-Manager`** enabled successfully"
 support_manager_on: "✅ ・ Support-Tickets Turned **`On`**"
 support_manager_off: "✅ ・ Support-Tickets Turned **`Off`**"
+
+##Lock/Unlock Button
+ticket_locked: "🔒 ・ Ticket closed, it will be removed after review"
+ticket_unlocked: "🔓 ・ Ticket unlocked"
+unlock_label: "Unlock"
+lock_label: "Lock"

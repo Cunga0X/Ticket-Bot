@@ -11,3 +11,10 @@ help_desc: "Izberi Kategorijo"
 help_category_desc: "Izberi kategorijo %{category} da vidiš vse ukaze"
 help_category: "%{category}"
 help_timeout: "```Čas menija pomoči je potekel, znova uporabiti %{prefix}pomoč.```"
+
+##Close
+ticket_closing: "🗑️ ・ Prijava bo zaprta čez `%{time}`"
+ticket_saved: "Prijava Shranjena"
+opened_by: "Odprl:"
+closed_by: "Zaprl:"
+invalid_channel: "⚠️ ・ Ta ukaz lahko uporabiš le v prijavi!"

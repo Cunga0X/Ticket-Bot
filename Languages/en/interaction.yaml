@@ -1,0 +1,4 @@
+## Command interactions
+no_command_error: "Error Encountered!"
+user_missing_perm: "You need **`%user_perm`** permission to use this command"
+bot_missing_perm: "I need **`bot_perm`** permission to use this command"
