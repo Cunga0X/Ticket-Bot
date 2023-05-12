@@ -382,7 +382,6 @@ module.exports = {
           })}`;
           const channelsQ = await guild.channels.fetch();
           const posChannelQ = channelsQ.find((c) => c.name === ticketUserQ.toLowerCase());
-          console.log(posChannelQ);
 
           const qReplyEmbed = new EmbedBuilder().setColor("Yellow").setDescription(
             `${client.i18n.get(language, "tickets", "already_opened", {
