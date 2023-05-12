@@ -93,21 +93,18 @@ This project is a Discord Ticket Bot that provides a simple and efficient way to
 
 ## Getting Started
 
-There are two ways of using this bot. You can invite it to your server or host it on your own.
-If you choose own host follow instructions below
+This bot offers you two options for using it. You can either add it to your server or run it on your own machine. The first option is easier and faster, while the second option gives you more control and customization. To host the bot yourself, please follow the instructions below.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-
-- npm
-  ```sh
-  npm install
-  ```
+1. Clone this project to your local machine using `git clone https://github.com/your-username/your-project-name.git`
+2. Use `npm i` to install all the required packages and dependencies
 
 ### Installation
 
-Soon
+1. Create a discord bot application at [https://discord.com/developers/applications](https://discord.com/developers/applications) and get your bot token
+2. Configure the `example-config.js` file with your bot token and other settings and rename it to `config.js`
+3. For webserver ticket history, you will need to open a port for pages to be accessible. You can use [ngrok](https://ngrok.com/) or any other service to expose your local port to the internet
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
