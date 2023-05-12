@@ -1,0 +1,55 @@
+## Question Modal
+q_modal_title: "Please, provide us some more information",
+q_modal_question: "Your Question",
+q_modal_username: "Your Username",
+q_modal_question_placeholder: "How can I join the server",
+q_modal_username_placeholder: "Cunga_",
+## Question Ticket Create
+question_ticket: "question-%{user}",
+q_embed_desc: "Hello <@!%{user}>, Please wait for staff to review your ticket.",
+q_field_question: "Question",
+q_field_username: "Username",
+q_field_type: "Type",
+q_field_type_value: "Question",
+
+
+## Report Modal
+r_modal_title: "Please, provide us some more information",
+r_modal_username: "Your Username",
+r_modal_player: "User you are Reporting",
+r_modal_situation: "Tell us more about what happend",
+r_modal_username_placeholder: "Cunga_",
+r_modal_player_placeholder: "Cvetka",
+r_modal_situation_placeholder: "Cvetka is cheating",
+## Report Ticket Create
+report_ticket: "report-%{user}",
+r_embed_desc: "Hello <@!%{user}>, Please wait for staff to review your ticket.",
+r_field_username: "Username",
+r_field_player: "Reported",
+r_field_desc: "Description",
+r_field_type: "Type",
+r_field_type: "Report",
+
+##Donation Modal
+d_modal_title: "Please, provide us some more information",
+d_modal_username: "Your Username",
+d_modal_tos: "Do you accept Terms of Service",
+d_modal_packages: "Packages",
+d_modal_psc: "PaySafeCard",
+d_modal_username_placeholder: "Cunga_",
+d_modal_tos_placeholder: "Yes/No",
+d_modal_packages_placeholder: "MasterBuilder Kit",
+d_modal_psc_placeholder: "1234-5678-9101-1234",
+
+##Donation Ticket Create
+donation_ticket: "donation-%{user}",
+d_embed_desc: "Hello <@!%{user}>, Please wait for staff to review your ticket.",
+d_field_username: "Username",
+d_field_tos: "TOS",
+d_field_packages: "Packages",
+d_field_psc: "PSC",
+d_field_type: "Type",
+d_field_type_value: "Donation",
+
+
+

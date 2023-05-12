@@ -4,12 +4,15 @@ error: "⚠️ ・ An unexpected error occurred during command execution."
 ## Support Tickets
 support_ticket_title: "Need Help?"
 support_ticket_message: "Choose ticket category, input necessary data and submit the ticket"
+support_ticket_message_off: "Tickets are currently unavailable"
 question_label: "❓ ・ Question"
 user_label: "👤 ・ User Report"
 donation_label: "💵 ・ Donation"
 support_ticket_placeholder: "--Select Catrgory--"
 setup_error: "⚠️ ・ Error, Ticket-System has already been setup"
 setup_success: "✅ ・ Support-Ticket-System setup successful, Ticket message sent to **`%{channel}`**, new tickets will be sent to **`%{category}`**"
+already_opened: "⚠️ ・ Your ticket is already opened! %{channel}",
+ticked_opened: "✅ ・ Your ticket has beed opened %{channel}"
 
 ## Tickets Remove
 remove_error: "⚠️ ・ Error, Can't find **`Ticket System`**!"
@@ -24,8 +27,10 @@ support_manager_success: "✅ ・ **`Support-Ticket-Manager`** enabled successfu
 support_manager_on: "✅ ・ Support-Tickets Turned **`On`**"
 support_manager_off: "✅ ・ Support-Tickets Turned **`Off`**"
 
-##Lock/Unlock Button
+##Lock/Unlock
 ticket_locked: "🔒 ・ Ticket closed, it will be removed after review"
 ticket_unlocked: "🔓 ・ Ticket unlocked"
 unlock_label: "Unlock"
 lock_label: "Lock"
+closed: "closed-%{user}"
+reopened: "reopened-%{user}"

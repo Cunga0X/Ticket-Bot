@@ -1,8 +1,22 @@
-const { Client, CommandInteraction, InteractionType, EmbedBuilder, ModalBuilder, ActionRowBuilder, StringSelectMenuBuilder, TextInputBuilder, ButtonBuilder, ButtonStyle, TextInputStyle, ChannelType, PermissionsBitField } = require("discord.js");
+const {
+  Client,
+  CommandInteraction,
+  InteractionType,
+  EmbedBuilder,
+  ModalBuilder,
+  ActionRowBuilder,
+  StringSelectMenuBuilder,
+  TextInputBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  TextInputStyle,
+  ChannelType,
+  PermissionsBitField,
+  Embed,
+} = require("discord.js");
 const { ApplicationCommand } = InteractionType;
 const Reply = require("../../Systems/Reply");
 const GLang = require("../../Models/Language.js");
-const Staff = require("../../Models/Staff");
 const Ticket = require("../../Models/Ticket");
 
 module.exports = {
@@ -59,7 +73,11 @@ module.exports = {
             const channelid = interaction.channel.id;
             const channel = client.channels.cache.get(channelid);
             const userid = data.CreatorID;
-            await channel.setName(`zaprl-${interaction.user.username}`);
+            await channel.setName(
+              `${client.i18n.get(language, "tickets", "closed", {
+                user: interaction.user.username,
+              })}`,
+            );
             const main = await Ticket.findOne({ Guild: guild.id, Ticket: "support-ticket-message" });
             const supportRole = main.SupportRole;
             await channel.permissionOverwrites.set([
@@ -102,7 +120,11 @@ module.exports = {
             const channelid = interaction.channel.id;
             const channel = client.channels.cache.get(channelid);
             const userid = data.CreatorID;
-            await channel.setName(`odprto-${interaction.user.username}`);
+            await channel.setName(
+              `${client.i18n.get(language, "tickets", "reopened", {
+                user: interaction.user.username,
+              })}`,
+            );
             const main = await Ticket.findOne({ Guild: guild.id, Ticket: "support-ticket-message" });
             const supportRole = main.SupportRole;
             await channel.permissionOverwrites.set([
@@ -196,10 +218,17 @@ module.exports = {
                   const message = await channel.messages.fetch(messageid);
                   const embed = message.embeds[0];
                   if (!embed) return interaction.reply(`${client.i18n.get(language, "tickets", "error")}`);
-                  const embedOff = new EmbedBuilder().setTitle("Potrebuješ pomoč?").setDescription("Prijave so trenutno zaprte!").setColor("Red");
+                  const embedOff = new EmbedBuilder()
+                    .setTitle(`${client.i18n.get(language, "tickets", "support_ticket_title")}`)
+                    .setDescription(`${client.i18n.get(language, "tickets", "support_ticket_message_off")}`)
+                    .setColor("Red");
 
                   await message.edit({ embeds: [embedOff], components: [] });
-                  Reply(interaction, "Green", "✅", "Prijave so zaprte", true);
+                  const embedoff = new EmbedBuilder().setColor("Green").setDescription(`${client.i18n.get(language, "tickets", "support_manager_off")}`);
+                  const m = await interaction.reply({ embeds: [embedoff], ephemeral: true });
+                  setTimeout(() => {
+                    m.delete();
+                  }, 4000);
                 } catch (error) {
                   console.error(error);
                 }
@@ -216,10 +245,20 @@ module.exports = {
         switch (selected) {
           case "question":
             if (!interaction.isStringSelectMenu()) return;
-            const modalQuestion = new ModalBuilder().setCustomId("TicketQuestionModal").setTitle("Prosimo, da nam posredujete več informacij");
+            const modalQuestion = new ModalBuilder().setCustomId("TicketQuestionModal").setTitle(`${client.i18n.get(language, "modals", "q_modal_title")}`);
 
-            const question = new TextInputBuilder().setCustomId("question").setLabel("Kako vam lahko pomagamo?").setStyle(TextInputStyle.Paragraph).setRequired(true).setPlaceholder("Vaše vprašanje");
-            const mcnameq = new TextInputBuilder().setCustomId("mcnameq").setLabel("Ime v Igri").setStyle(TextInputStyle.Short).setRequired(true).setPlaceholder("Vaše ime v Minecraftu");
+            const question = new TextInputBuilder()
+              .setCustomId("question")
+              .setLabel(`${client.i18n.get(language, "modals", "q_modal_question")}`)
+              .setStyle(TextInputStyle.Paragraph)
+              .setRequired(true)
+              .setPlaceholder(`${client.i18n.get(language, "modals", "q_modal_question_placeholder")}`);
+            const mcnameq = new TextInputBuilder()
+              .setCustomId("mcnameq")
+              .setLabel(`${client.i18n.get(language, "modals", "q_modal_username")}`)
+              .setStyle(TextInputStyle.Short)
+              .setRequired(true)
+              .setPlaceholder(`${client.i18n.get(language, "modals", "q_modal_username_placeholder")}`);
 
             const firstActionRowQ = new ActionRowBuilder().addComponents(question);
             const secondActionRowQ = new ActionRowBuilder().addComponents(mcnameq);
@@ -241,13 +280,28 @@ module.exports = {
             if (interaction.isButton()) return;
             if (interaction.isChatInputCommand()) return;
 
-            const modalPlayer = new ModalBuilder().setCustomId("TicketPlayerModal").setTitle("Prosimo, da nam posredujete več informacij");
+            const modalPlayer = new ModalBuilder().setCustomId("TicketPlayerModal").setTitle(`${client.i18n.get(language, "modals", "r_modal_title")}`);
 
-            const ticketMCnamePlayer = new TextInputBuilder().setCustomId("ticketMCname").setLabel("Vaše Minecraft uporabniško ime").setStyle(TextInputStyle.Short).setRequired(true).setPlaceholder("Jože");
+            const ticketMCnamePlayer = new TextInputBuilder()
+              .setCustomId("ticketMCname")
+              .setLabel(`${client.i18n.get(language, "modals", "r_modal_username")}`)
+              .setStyle(TextInputStyle.Short)
+              .setRequired(true)
+              .setPlaceholder(`${client.i18n.get(language, "modals", "r_modal_username_placeholder")}`);
 
-            const reportedPlayer = new TextInputBuilder().setCustomId("reportedPlayer").setLabel("Igralec, ki ga prijavljate").setStyle(TextInputStyle.Short).setRequired(true).setPlaceholder("Miha");
+            const reportedPlayer = new TextInputBuilder()
+              .setCustomId("reportedPlayer")
+              .setLabel(`${client.i18n.get(language, "modals", "r_modal_player")}`)
+              .setStyle(TextInputStyle.Short)
+              .setRequired(true)
+              .setPlaceholder(`${client.i18n.get(language, "modals", "r_modal_player_placeholder")}`);
 
-            const ticketPlayerDescriptionInput = new TextInputBuilder().setCustomId("ticketPlayerDescriptionInput").setLabel("Opišite situacijo").setStyle(TextInputStyle.Paragraph).setRequired(true).setPlaceholder("Miha uporablja hacked-client.");
+            const ticketPlayerDescriptionInput = new TextInputBuilder()
+              .setCustomId("ticketPlayerDescriptionInput")
+              .setLabel(`${client.i18n.get(language, "modals", "r_modal_situation")}`)
+              .setStyle(TextInputStyle.Paragraph)
+              .setRequired(true)
+              .setPlaceholder(`${client.i18n.get(language, "modals", "r_modal_situation_placeholder")}`);
 
             const firstActionRow = new ActionRowBuilder().addComponents(ticketMCnamePlayer);
             const secondActionRow = new ActionRowBuilder().addComponents(reportedPlayer);
@@ -264,15 +318,35 @@ module.exports = {
             if (interaction.isButton()) return;
             if (interaction.isChatInputCommand()) return;
 
-            const modalDonation = new ModalBuilder().setCustomId("TicketDonacijaModal").setTitle("Prosimo, da nam posredujete več informacij");
+            const modalDonation = new ModalBuilder().setCustomId("TicketDonacijaModal").setTitle(`${client.i18n.get(language, "modals", "d_modal_title")}`);
 
-            const ticketMCnameDonacija = new TextInputBuilder().setCustomId("ticketMCnameDonacija").setLabel("Vaše Minecraft uporabniško ime").setStyle(TextInputStyle.Short).setRequired(true).setPlaceholder("Jože");
+            const ticketMCnameDonacija = new TextInputBuilder()
+              .setCustomId("ticketMCnameDonacija")
+              .setLabel(`${client.i18n.get(language, "modals", "d_modal_username")}`)
+              .setStyle(TextInputStyle.Short)
+              .setRequired(true)
+              .setPlaceholder(`${client.i18n.get(language, "modals", "d_modal_username_placeholder")}`);
 
-            const tos = new TextInputBuilder().setCustomId("tos").setLabel("Ali se strinjate z Terms of Use").setStyle(TextInputStyle.Short).setRequired(true).setPlaceholder("Da/Ne");
+            const tos = new TextInputBuilder()
+              .setCustomId("tos")
+              .setLabel(`${client.i18n.get(language, "modals", "d_modal_tos")}`)
+              .setStyle(TextInputStyle.Short)
+              .setRequired(true)
+              .setPlaceholder(`${client.i18n.get(language, "modals", "d_modal_tos_placeholder")}`);
 
-            const shopItems = new TextInputBuilder().setCustomId("shopItems").setLabel("Katere Izdelke želite pridobiti?").setStyle(TextInputStyle.Paragraph).setRequired(true).setPlaceholder("Rank VIP");
+            const shopItems = new TextInputBuilder()
+              .setCustomId("shopItems")
+              .setLabel(`${client.i18n.get(language, "modals", "d_modal_packages")}`)
+              .setStyle(TextInputStyle.Paragraph)
+              .setRequired(true)
+              .setPlaceholder(`${client.i18n.get(language, "modals", "d_modal_packages_placeholder")}`);
 
-            const psc = new TextInputBuilder().setCustomId("psc").setLabel("PaySafeCard Koda").setStyle(TextInputStyle.Short).setRequired(true).setPlaceholder("0123-4567-8910-1112");
+            const psc = new TextInputBuilder()
+              .setCustomId("psc")
+              .setLabel(`${client.i18n.get(language, "modals", "d_modal_psc")}`)
+              .setStyle(TextInputStyle.Short)
+              .setRequired(true)
+              .setPlaceholder(`${client.i18n.get(language, "modals", "d_modal_psc_placeholder")}`);
 
             const firstActionRowD = new ActionRowBuilder().addComponents(ticketMCnameDonacija);
             const secondActionRowD = new ActionRowBuilder().addComponents(tos);
@@ -296,26 +370,33 @@ module.exports = {
           const question = fields.getTextInputValue("question");
           const mcnameq = fields.getTextInputValue("mcnameq");
 
-          const ticketUserQ = `vprašanje-${interaction.user.username}`;
+          const ticketUserQ = `${client.i18n.get(language, "modals", "question_ticket", {
+            user: interaction.user.username,
+          })}`;
           const channelsQ = await guild.channels.fetch();
           const posChannelQ = channelsQ.find((c) => c.name === ticketUserQ.toLowerCase());
 
-          if (posChannelQ) return Reply(interaction, "Yellow", "⚠️", `Ticket že imaš odprt - ${posChannelQ}`, true);
+          const qReplyEmbed = new EmbedBuilder().setColor("Yellow").setDescription(
+            `${client.i18n.get(language, "tickets", "already_opened", {
+              channel: posChannelQ,
+            })}`,
+          );
+          if (posChannelQ) return interaction.reply({ embeds: [qReplyEmbed] });
 
           const embedQ = new EmbedBuilder()
             .setColor("Green")
             .setTitle(`${interaction.user.username}'s Ticket`)
-            .setDescription(`Pozdravljen <@!${interaction.user.id}>! Prosim počakajte, da osebje pregleda vaše podatke`)
-            .addFields({ name: `Vprašanje`, value: `${question}` })
-            .addFields({ name: `Ime v MC`, value: `${mcnameq}` })
-            .addFields({ name: `Tip`, value: `Vprašanje` })
+            .setDescription(`${client.i18n.get(language, "modals", "q_embed_desc")}`)
+            .addFields({ name: `${client.i18n.get(language, "modals", "q_field_question")}`, value: `${question}` })
+            .addFields({ name: `${client.i18n.get(language, "modals", "q_field_username")}`, value: `${mcnameq}` })
+            .addFields({ name: `${client.i18n.get(language, "modals", "q_field_type")}`, value: `${client.i18n.get(language, "modals", "q_field_type_value")}` })
             .setFooter({ text: `${interaction.guild.name} Support` });
           Ticket.findOne({ Guild: guild.id, Ticket: "support-ticket-message" }, async (err, data) => {
             try {
               const supportRole = data.SupportRole;
               const parentCategory = data.Channel;
               let channelQ = await interaction.guild.channels.create({
-                name: `vprašanje-${interaction.user.username}`,
+                name: ticketUserQ,
                 type: ChannelType.GuildText,
                 parent: parentCategory,
                 permissionOverwrites: [
@@ -335,7 +416,13 @@ module.exports = {
               });
 
               const lockQ = new ActionRowBuilder();
-              lockQ.addComponents(new ButtonBuilder().setCustomId("lock").setLabel("Zapri").setStyle("Secondary").setEmoji("🔒"));
+              lockQ.addComponents(
+                new ButtonBuilder()
+                  .setCustomId("lock")
+                  .setLabel(`${client.i18n.get(language, "tickets", "locked_label")}`)
+                  .setStyle("Secondary")
+                  .setEmoji("🔒"),
+              );
               const msgQ = await channelQ.send({ embeds: [embedQ], components: [lockQ] });
 
               await Ticket.create({
@@ -344,8 +431,12 @@ module.exports = {
                 MessageID: msgQ.id,
                 CreatorID: user.id,
               });
-
-              Reply(interaction, "Green", "✅", `Tvoj ticket je odprt - ${channelQ}`, true);
+              const openedEmbedQ = new EmbedBuilder().setColor("Green").setDescription(
+                `${client.i18n.get(language, "tickets", "ticked_opened", {
+                  channel: posChannelQ,
+                })}`,
+              );
+              interaction.reply({ embeds: [openedEmbedQ], ephemeral: true });
             } catch (err) {
               throw new Error(err);
             }
@@ -361,23 +452,34 @@ module.exports = {
               const ticketDescriptionInput = fields.getTextInputValue("ticketPlayerDescriptionInput");
               const reportedPlayer = fields.getTextInputValue("reportedPlayer");
 
-              const ticketUserP = `prijava-${interaction.user.username}`;
+              const ticketUserP = `${client.i18n.get(language, "modals", "report_ticket", {
+                user: interaction.user.username,
+              })}`;
               const channelsP = await guild.channels.fetch();
               const posChannelP = channelsP.find((c) => c.name === ticketUserP.toLowerCase());
-              if (posChannelP) return Reply(interaction, "Yellow", "⚠️", `Ticket že imaš odprt - ${posChannelP}`, true);
+              const pReplyEmbed = new EmbedBuilder().setColor("Yellow").setDescription(
+                `${client.i18n.get(language, "tickets", "already_opened", {
+                  channel: posChannelP,
+                })}`,
+              );
+              if (posChannelP) return interaction.reply({ embeds: [pReplyEmbed] });
 
               const embedP = new EmbedBuilder()
                 .setColor("Green")
                 .setTitle(`${interaction.user.username}'s Ticket`)
-                .setDescription(`Pozdravljen <@!${interaction.user.id}>! Prosim počakajte, da osebje pregleda vaše podatke`)
-                .addFields({ name: `Ime v MC`, value: `${ticketMCname}` })
-                .addFields({ name: `Igralec ki ga prijavlja`, value: `${reportedPlayer}` })
-                .addFields({ name: `Opis`, value: `${ticketDescriptionInput}` })
-                .addFields({ name: `Tip`, value: `Prijava igralca` })
+                .setDescription(
+                  `${client.i18n.get(language, "modals", "r_embed_desc", {
+                    user: interaction.user.username,
+                  })}`,
+                )
+                .addFields({ name: `${client.i18n.get(language, "modals", "r_field_username")}`, value: `${ticketMCname}` })
+                .addFields({ name: `${client.i18n.get(language, "modals", "r_field_player")}`, value: `${reportedPlayer}` })
+                .addFields({ name: `${client.i18n.get(language, "modals", "r_field_desc")}`, value: `${ticketDescriptionInput}` })
+                .addFields({ name: `${client.i18n.get(language, "modals", "r_field_type")}`, value: `${client.i18n.get(language, "modals", "r_field_type_value")}` })
                 .setFooter({ text: `${interaction.guild.name} Support` });
 
               let channelP = await interaction.guild.channels.create({
-                name: `prijava-${interaction.user.username}`,
+                name: ticketUserP,
                 type: ChannelType.GuildText,
                 parent: parentCategory,
                 permissionOverwrites: [
@@ -397,7 +499,13 @@ module.exports = {
               });
 
               const lockP = new ActionRowBuilder();
-              lockP.addComponents(new ButtonBuilder().setCustomId("lock").setLabel("Zapri").setStyle("Secondary").setEmoji("🔒"));
+              lockP.addComponents(
+                new ButtonBuilder()
+                  .setCustomId("lock")
+                  .setLabel(`${client.i18n.get(language, "tickets", "locked_label")}`)
+                  .setStyle("Secondary")
+                  .setEmoji("🔒"),
+              );
               const msgP = await channelP.send({ embeds: [embedP], components: [lockP] });
 
               await Ticket.create({
@@ -405,8 +513,8 @@ module.exports = {
                 Channel: channelP.id,
                 MessageID: msgP.id,
               });
-
-              Reply(interaction, "Green", "✅", `Tvoj ticket je odprt - ${channelP}`, true);
+              const openedEmbedP = new EmbedBuilder().setColor("Green").setDescription(`${client.i18n.get(language, "tickets", "ticket_opened")}`);
+              interaction.reply({ embeds: [openedEmbedP], ephemeral: true });
             } catch (err) {
               throw new Error(err);
             }
@@ -422,24 +530,35 @@ module.exports = {
               const shopItems = fields.getTextInputValue("shopItems");
               const psc = fields.getTextInputValue("psc");
 
-              const ticketUserD = `donacija-${interaction.user.username}`;
+              const ticketUserD = `${client.i18n.get(language, "modals", "donation_ticket", {
+                user: interaction.user.username,
+              })}`;
               const channelsD = await guild.channels.fetch();
               const posChannelD = channelsD.find((c) => c.name === ticketUserD.toLowerCase());
-              if (posChannelD) return Reply(interaction, "Yellow", "⚠️", `Ticket že imaš odprt - ${posChannelD}`, true);
+              const dReplyEmbed = new EmbedBuilder().setColor("Yellow").setDescription(
+                `${client.i18n.get(language, "tickets", "already_opened", {
+                  channel: posChannelD,
+                })}`,
+              );
+              if (posChannelD) return interaction.reply({ embeds: [dReplyEmbed] });
 
               const embed = new EmbedBuilder()
                 .setColor("Green")
                 .setTitle(`${interaction.user.username}'s Ticket`)
-                .setDescription(`Pozdravljen <@!${interaction.user.id}>! Prosim počakajte, da osebje pregleda vaše podatke`)
-                .addFields({ name: `Minecraft ime`, value: `${ticketMCnameDonacija}` })
-                .addFields({ name: `Terms of Service`, value: `${tos}` })
-                .addFields({ name: `Shop Items`, value: `${shopItems}` })
-                .addFields({ name: `PaySafeCard`, value: `${psc}` })
-                .addFields({ name: `Tip`, value: `Donacija` })
+                .setDescription(
+                  `${client.i18n.get(language, "modals", "d_embed_desc", {
+                    user: interaction.user.username,
+                  })}`,
+                )
+                .addFields({ name: `${client.i18n.get(language, "modals", "d_field_username")}`, value: `${ticketMCnameDonacija}` })
+                .addFields({ name: `${client.i18n.get(language, "modals", "d_field_tos")}`, value: `${tos}` })
+                .addFields({ name: `${client.i18n.get(language, "modals", "d_field_packages")}`, value: `${shopItems}` })
+                .addFields({ name: `${client.i18n.get(language, "modals", "d_field_psc")}`, value: `${psc}` })
+                .addFields({ name: `${client.i18n.get(language, "modals", "d_field_type")}`, value: `${client.i18n.get(language, "modals", "d_field_type_value")}` })
                 .setFooter({ text: `${interaction.guild.name} Support` });
 
               let channel = await interaction.guild.channels.create({
-                name: `donacija-${interaction.user.username}`,
+                name: ticketUserD,
                 type: ChannelType.GuildText,
                 parent: parentCategory,
                 permissionOverwrites: [
@@ -455,7 +574,13 @@ module.exports = {
               });
 
               const lockD = new ActionRowBuilder();
-              lockD.addComponents(new ButtonBuilder().setCustomId("lock").setLabel("Zapri").setStyle("Secondary").setEmoji("🔒"));
+              lockD.addComponents(
+                new ButtonBuilder()
+                  .setCustomId("lock")
+                  .setLabel(`${client.i18n.get(language, "tickets", "locked_label")}`)
+                  .setStyle("Secondary")
+                  .setEmoji("🔒"),
+              );
               const msg = await channel.send({ embeds: [embed], components: [lockD] });
 
               await Ticket.create({
@@ -463,8 +588,15 @@ module.exports = {
                 Channel: channel.id,
                 MessageID: msg.id,
               });
-
-              Reply(interaction, "Green", "✅", `Tvoj ticket je odprt - ${channel}`, true);
+              const openedEmbedD = new EmbedBuilder().setColor("Green").setDescription(
+                `${
+                  (client.i18n.get(language, "tickets", "ticket_opened"),
+                  {
+                    channel: posChannelD,
+                  })
+                }`,
+              );
+              interaction.reply({ embeds: [openedEmbedD], ephemeral: true });
             } catch (err) {
               throw new Error(err);
             }

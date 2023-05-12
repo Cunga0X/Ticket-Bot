@@ -1,12 +1,18 @@
+##ERROR
+error: "⚠️ ・ An unexpected error occurred during command execution."
+
 ## Support Tickets
 support_ticket_title: "Potrebuješ pomoč?"
 support_ticket_message: "Izberi vrsto prijave in izpolni potrebne podatke."
+support_ticket_message_off: "Prijave so trenutno zaprte"
 question_label: "❓ ・ Vprašanje"
 user_label: "👤 ・ Prijava Igralca"
 donation_label: "💵 ・ Donacija"
 support_ticket_placeholder: "--Izberi Kategorijo--"
 setup_error: "⚠️ ・ Napaka, Ticket-System je že bil narejen!"
 setup_success: "✅ ・ Ticket-System uspešno konfiguriran, Sporočilo za prijave je bilo poslano v **`%{channel}`**, nove prijave bodo poslane v **`%{category}`**."
+already_opened: "⚠️ ・ Tvoja prijava je že odprta %{channel}",
+ticked_opened: "✅ ・ Tvoja prijava je bila odprta %{channel}"
 
 ## Tickets Remove
 remove_error: "⚠️ ・ Napaka, Ne najdem **`Ticket Sistema`**!"
@@ -26,3 +32,5 @@ ticket_locked: "🔒 ・ Prijava zaklenjena, odstranjena bo po pregledu"
 ticket_unlocked: "🔓 ・ Prijava odklenjena"
 unlock_label: "Odkleni"
 lock_label: "Zakleni"
+closed: "closed-%{user}"
+reopened: "reopened-%{user}"

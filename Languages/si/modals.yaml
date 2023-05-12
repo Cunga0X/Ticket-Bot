@@ -1,0 +1,55 @@
+## Question Modal
+q_modal_title: "Prosim, izoplni naslednje podatke",
+q_modal_question: "Vaše Vprašanje",
+q_modal_username: "Vaše Uporabniško ime",
+q_modal_question_placeholder: "Kako se pridružim serverju?",
+q_modal_username_placeholder: "Cunga_",
+## Question Ticket Create
+question_ticket: "vprašanje-%{user}",
+q_embed_desc: "Pozdravljen <@!%{user}>, prosim počakaj na osebje, da pregleda vašo prijavo.",
+q_field_question: "Vprašanje",
+q_field_username: "Ime",
+q_field_type: "Tip",
+q_field_type_value: "Vprašanje",
+
+
+## Report Modal
+r_modal_title: "Prosim, izoplni naslednje podatke",
+r_modal_username: "Vaše Uporabniško ime",
+r_modal_player: "Igralec, ki ga prijavljate",
+r_modal_situation: "Povej nam več kaj se je zgodilo",
+r_modal_username_placeholder: "Cunga_",
+r_modal_player_placeholder: "Cvetka",
+r_modal_situation_placeholder: "Cvetka uporablja hacked client",
+## Report Ticket Create
+report_ticket: "prijava-%{user}",
+r_embed_desc: "Pozdravljen <@!%{user}>, prosim počakaj na osebje, da pregleda vašo prijavo.",
+r_field_username: "Ime",
+r_field_player: "Prijavlja",
+r_field_desc: "Description",
+r_field_type: "Tip",
+r_field_type: "Prijava",
+
+##Donation Modal
+d_modal_title: "Prosim, izoplni naslednje podatke",
+d_modal_username: "Vaše Uporabniško ime",
+d_modal_tos: "Ali sprejmeš Terms of Service",
+d_modal_packages: "Paketi",
+d_modal_psc: "PaySafeCard",
+d_modal_username_placeholder: "Cunga_",
+d_modal_tos_placeholder: "Da/Ne",
+d_modal_packages_placeholder: "MasterBuilder Kit",
+d_modal_psc_placeholder: "1234-5678-9101-1234",
+
+##Donation Ticket Create
+donation_ticket: "donacija-%{user}",
+d_embed_desc: "Pozdravljen <@!%{user}>, prosim počakaj na osebje, da pregleda vašo prijavo.",
+d_field_username: "Ime",
+d_field_tos: "TOS",
+d_field_packages: "Paketi",
+d_field_psc: "PSC",
+d_field_type: "Tip",
+d_field_type_value: "Donacija",
+
+
+

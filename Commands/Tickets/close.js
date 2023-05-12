@@ -32,7 +32,7 @@ module.exports = {
         const time = interaction.options.getString("time");
         const serverid = interaction.guild.id;
         client.guilds.cache.get(serverid);
-        const channelName = ["bug-", "vprašanje-", "donacija-", "prijava-", "odprto-", "zaprto-", "zaprl-", "odprl-"];
+        const channelName = ["bug-", "vprašanje-", "donacija-", "prijava-", "odprto-", "zaprto-", "zaprl-", "odprl-", "closed-", "reopened-"];
         if (channelName.some((name) => interaction.channel.name.includes(name))) {
           const embed = new EmbedBuilder().setColor("Yellow").setDescription(
             `${client.i18n.get(language, "utilities", "ticket_closing", {
