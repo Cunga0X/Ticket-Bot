@@ -84,8 +84,7 @@ soon
 
 ### Built With
 
-- [Express.js][https://expressjs.com/]
-- [Discord.js][https://discord.js.org/]
+soon
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
