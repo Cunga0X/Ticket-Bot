@@ -78,13 +78,13 @@
 
 ## About The Project
 
-soon
+This project is a Discord Ticket Bot that provides a simple and efficient way to manage customer support on Discord servers. The bot allows users to create interactive tickets with customizable categories, questions, and responses. The bot also generates HTML transcripts of the closed tickets that can be viewed online or downloaded for future reference. The bot is easy to set up and use, and can handle multiple tickets simultaneously. The bot aims to improve the quality and speed of customer service on Discord platforms.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
 
-soon
+- [![Express][Express.js]][Express-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -192,5 +192,6 @@ Use this space to list resources you find helpful and would like to give credit 
 [license-shield]: https://img.shields.io/github/license/Cunga0X/Ticket-Bot.svg?style=for-the-badge
 [license-url]: https://github.com/Cunga0X/Ticket-Bot/blob/master/LICENSE.txt
 [product-screenshot]: images/screenshot.png
-[Express.js]: https://img.shields.io/badge/express.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[Express.js]: https://img.shields.io/badge/express-563D7C?style=for-the-badge&logo=express&logoColor=white
+[Express-url]: https://expressjs.com/
 [Discord.js]: https://img.shields.io/badge/discord.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
