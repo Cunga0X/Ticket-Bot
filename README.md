@@ -85,6 +85,7 @@ This project is a Discord Ticket Bot that provides a simple and efficient way to
 ### Built With
 
 - [![Express][Express.js]][Express-url]
+- [![DiscordJS][Discord.js]][Discord-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -194,4 +195,5 @@ Use this space to list resources you find helpful and would like to give credit 
 [product-screenshot]: images/screenshot.png
 [Express.js]: https://img.shields.io/badge/express-563D7C?style=for-the-badge&logo=express&logoColor=white
 [Express-url]: https://expressjs.com/
-[Discord.js]: https://img.shields.io/badge/discord.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[Discord.js]: https://img.shields.io/badge/discordjs-000000?style=for-the-badge&logo=discordjs&logoColor=white
+[Discord-url]: https://discord.js.org/
