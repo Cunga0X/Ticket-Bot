@@ -1,0 +1,20 @@
+## Language Command
+lang_perm: "⚠️ ・ You need the `MANAGE_GUILD` permission to use this command."
+lang_arg: "⚠️ ・ Please specify a language!"
+provide_lang: "⚠️ ・ Please provide a language: **`%{languages}`**"
+lang_set: "🌍 ・ Language has been set to: **`%{language}`**"
+lang_change: "🌍 ・ Language has been change to: **`%{language}`**"
+lang_error: "⚠️ ・ Something went wrong please try again later."
+
+## Help command
+help_desc: "Please Select Category Menu!"
+help_category_desc: "Select the %{category} to see all commands."
+help_category: "%{category}"
+help_timeout: "```Help Menu timed out try using %{prefix}help again.```"
+
+##Close
+ticket_closing: "🗑️ ・ Prijava bo zaprta čez `%{time}`"
+ticket_saved: "Ticket saved"
+opened_by: "Opened by:"
+closed_by: "Closed by":
+invalid_channel: "⚠️ ・ You can only use this command in ticket channel"

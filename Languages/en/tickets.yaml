@@ -1,0 +1,22 @@
+## Support Tickets
+support_ticket_title: "Need Help?"
+support_ticket_message: "Choose ticket category, input necessary data and submit the ticket"
+question_label: "❓ ・ Question"
+user_label: "👤 ・ User Report"
+donation_label: "💵 ・ Donation"
+support_ticket_placeholder: "--Select Catrgory--"
+setup_error: "⚠️ ・ Error, Ticket-System has already been setup"
+setup_success: "✅ ・ Support-Ticket-System setup successful, Ticket message sent to **`%{channel}`**, new tickets will be sent to **`%{category}`**"
+
+## Tickets Remove
+remove_error: "⚠️ ・ Error, Can't find **`Ticket System`**!"
+remove_success: "✅ ・ **`Ticket-System`** removed successfully"
+
+## Support Ticket Manager
+support_manager_message: "Open/Close Support-Ticket creation"
+support_button_enable: "Open"
+support_button_disable: "Close"
+support_manager_error: "⚠️ ・ Error, Can't find **`Support-Ticket System`**!"
+support_manager_success: "✅ ・ **`Support-Ticket-Manager`** enabled successfully"
+support_manager_on: "✅ ・ Support-Tickets Turned **`On`**"
+support_manager_off: "✅ ・ Support-Tickets Turned **`Off`**"
