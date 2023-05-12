@@ -35,6 +35,7 @@ module.exports = {
       });
 
       app.listen(PORT);
+      console.log(chalk.green("Ticket's server Online"));
     }
 
     setInterval(() => {
@@ -43,8 +44,6 @@ module.exports = {
         type: 0,
       });
     }, ms("5s"));
-
-    console.log(chalk.green("Ticket's server Online"));
 
     if (!MONGO_DB) return;
 
