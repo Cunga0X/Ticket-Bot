@@ -104,6 +104,29 @@ This bot offers you two options for using it. You can either add it to your serv
 
 1. Create a discord bot application at [https://discord.com/developers/applications](https://discord.com/developers/applications) and get your bot token
 2. Configure the `example-config.js` file with your bot token and other settings and rename it to `config.js`
+
+```
+const { resolve } = require("path");
+
+module.exports = {
+  TOKEN: "your token",
+  LOGS: "channel for error logs",
+  MONGO_DB: "your mongodb uri",
+
+  LANGUAGE: {
+    defaultLocale: "en", // "en" = default language
+    directory: resolve("Languages"), // <= location of language
+  },
+
+  // Options "web" or "local"
+  TICKETS_HISTORY: "local",
+
+  //WEBSERVER CONFIG
+  PORT: 443,
+  FQDM: "my.domain.com",
+};
+```
+
 3. For webserver ticket history, you will need to open a port for pages to be accessible. You can use [ngrok](https://ngrok.com/) or any other service to expose your local port to the internet
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
