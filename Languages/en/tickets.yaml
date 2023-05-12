@@ -11,7 +11,7 @@ donation_label: "💵 ・ Donation"
 support_ticket_placeholder: "--Select Catrgory--"
 setup_error: "⚠️ ・ Error, Ticket-System has already been setup"
 setup_success: "✅ ・ Support-Ticket-System setup successful, Ticket message sent to **`%{channel}`**, new tickets will be sent to **`%{category}`**"
-already_opened: "⚠️ ・ Your ticket is already opened! %{channel}",
+already_opened: "⚠️ ・ Your ticket is already opened! %{channel}"
 ticked_opened: "✅ ・ Your ticket has beed opened %{channel}"
 
 ## Tickets Remove
@@ -31,6 +31,8 @@ support_manager_off: "✅ ・ Support-Tickets Turned **`Off`**"
 ticket_locked: "🔒 ・ Ticket closed, it will be removed after review"
 ticket_unlocked: "🔓 ・ Ticket unlocked"
 unlock_label: "Unlock"
-lock_label: "Lock"
+locked_label: "Lock"
 closed: "closed-%{user}"
 reopened: "reopened-%{user}"
+claim: "Claim"
+claimed: "🎟️ ・ Your ticked will be resolved by `%{user}`"

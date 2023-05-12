@@ -159,6 +159,14 @@ module.exports = {
           console.log(err);
         }
       }
+      if (customId === "claim") {
+        const embed = new EmbedBuilder().setColor("Yellow").setDescription(
+          `${client.i18n.get(language, "tickets", "claimed", {
+            user: interaction.user.tag,
+          })}`,
+        );
+        interaction.reply({ content: `||<@${user.id}>||`, embeds: [embed] });
+      }
       if (customId == "support-ticket-enable" || customId == "ticket-disable") {
         Ticket.findOne({ Guild: guild.id, Message: message.id, Channel: channel.id, Ticket: "support-ticket-message" }, async (err, data) => {
           switch (customId) {
@@ -266,7 +274,7 @@ module.exports = {
             modalQuestion.addComponents(firstActionRowQ, secondActionRowQ);
             await interaction.showModal(modalQuestion);
             Ticket.findOne(
-              { Guild: guildId, MessageID: message.id, Ticket: "first" },
+              { Guild: guildId, MessageID: message.id, Ticket: "support-ticket-message" },
               async (err, data) => {
                 setTimeout(() => {
                   message.edit({ content: null });
@@ -310,7 +318,7 @@ module.exports = {
             modalPlayer.addComponents(firstActionRow, secondActionRow, thirdAcrtionRow);
 
             await interaction.showModal(modalPlayer);
-            Ticket.findOne({ Guild: guildId, MessageID: message.id, Ticket: "first" }, async (err, data) => {
+            Ticket.findOne({ Guild: guildId, MessageID: message.id, Ticket: "support-ticket-message" }, async (err, data) => {
               message.edit({ content: null });
             });
             break;
@@ -356,7 +364,7 @@ module.exports = {
             modalDonation.addComponents(firstActionRowD, secondActionRowD, thirdActionRow, fourthActionRow);
 
             await interaction.showModal(modalDonation);
-            Ticket.findOne({ Guild: guildId, MessageID: message.id, Ticket: "first" }, async (err, data) => {
+            Ticket.findOne({ Guild: guildId, MessageID: message.id, Ticket: "support-ticket-message" }, async (err, data) => {
               message.edit({ content: null });
             });
             break;
@@ -369,24 +377,28 @@ module.exports = {
         case "TicketQuestionModal":
           const question = fields.getTextInputValue("question");
           const mcnameq = fields.getTextInputValue("mcnameq");
-
           const ticketUserQ = `${client.i18n.get(language, "modals", "question_ticket", {
             user: interaction.user.username,
           })}`;
           const channelsQ = await guild.channels.fetch();
           const posChannelQ = channelsQ.find((c) => c.name === ticketUserQ.toLowerCase());
+          console.log(posChannelQ);
 
           const qReplyEmbed = new EmbedBuilder().setColor("Yellow").setDescription(
             `${client.i18n.get(language, "tickets", "already_opened", {
               channel: posChannelQ,
             })}`,
           );
-          if (posChannelQ) return interaction.reply({ embeds: [qReplyEmbed] });
+          if (posChannelQ) return interaction.reply({ embeds: [qReplyEmbed], ephemeral: true });
 
           const embedQ = new EmbedBuilder()
             .setColor("Green")
             .setTitle(`${interaction.user.username}'s Ticket`)
-            .setDescription(`${client.i18n.get(language, "modals", "q_embed_desc")}`)
+            .setDescription(
+              `${client.i18n.get(language, "modals", "q_embed_desc", {
+                user: user.id,
+              })}`,
+            )
             .addFields({ name: `${client.i18n.get(language, "modals", "q_field_question")}`, value: `${question}` })
             .addFields({ name: `${client.i18n.get(language, "modals", "q_field_username")}`, value: `${mcnameq}` })
             .addFields({ name: `${client.i18n.get(language, "modals", "q_field_type")}`, value: `${client.i18n.get(language, "modals", "q_field_type_value")}` })
@@ -422,6 +434,11 @@ module.exports = {
                   .setLabel(`${client.i18n.get(language, "tickets", "locked_label")}`)
                   .setStyle("Secondary")
                   .setEmoji("🔒"),
+                new ButtonBuilder()
+                  .setCustomId("claim")
+                  .setLabel(`${client.i18n.get(language, "tickets", "claim")}`)
+                  .setStyle("Secondary")
+                  .setEmoji("🎟️"),
               );
               const msgQ = await channelQ.send({ embeds: [embedQ], components: [lockQ] });
 
@@ -433,7 +450,7 @@ module.exports = {
               });
               const openedEmbedQ = new EmbedBuilder().setColor("Green").setDescription(
                 `${client.i18n.get(language, "tickets", "ticked_opened", {
-                  channel: posChannelQ,
+                  channel: channelQ,
                 })}`,
               );
               interaction.reply({ embeds: [openedEmbedQ], ephemeral: true });
@@ -462,14 +479,14 @@ module.exports = {
                   channel: posChannelP,
                 })}`,
               );
-              if (posChannelP) return interaction.reply({ embeds: [pReplyEmbed] });
+              if (posChannelP) return interaction.reply({ embeds: [pReplyEmbed], ephemeral: true });
 
               const embedP = new EmbedBuilder()
                 .setColor("Green")
                 .setTitle(`${interaction.user.username}'s Ticket`)
                 .setDescription(
                   `${client.i18n.get(language, "modals", "r_embed_desc", {
-                    user: interaction.user.username,
+                    user: interaction.user.id,
                   })}`,
                 )
                 .addFields({ name: `${client.i18n.get(language, "modals", "r_field_username")}`, value: `${ticketMCname}` })
@@ -513,7 +530,11 @@ module.exports = {
                 Channel: channelP.id,
                 MessageID: msgP.id,
               });
-              const openedEmbedP = new EmbedBuilder().setColor("Green").setDescription(`${client.i18n.get(language, "tickets", "ticket_opened")}`);
+              const openedEmbedP = new EmbedBuilder().setColor("Green").setDescription(
+                `${client.i18n.get(language, "tickets", "ticket_opened", {
+                  channel: channelP,
+                })}`,
+              );
               interaction.reply({ embeds: [openedEmbedP], ephemeral: true });
             } catch (err) {
               throw new Error(err);
@@ -537,17 +558,17 @@ module.exports = {
               const posChannelD = channelsD.find((c) => c.name === ticketUserD.toLowerCase());
               const dReplyEmbed = new EmbedBuilder().setColor("Yellow").setDescription(
                 `${client.i18n.get(language, "tickets", "already_opened", {
-                  channel: posChannelD,
+                  channel: posChannelD.id,
                 })}`,
               );
-              if (posChannelD) return interaction.reply({ embeds: [dReplyEmbed] });
+              if (posChannelD) return interaction.reply({ embeds: [dReplyEmbed], ephemeral: true });
 
               const embed = new EmbedBuilder()
                 .setColor("Green")
                 .setTitle(`${interaction.user.username}'s Ticket`)
                 .setDescription(
                   `${client.i18n.get(language, "modals", "d_embed_desc", {
-                    user: interaction.user.username,
+                    user: interaction.user.id,
                   })}`,
                 )
                 .addFields({ name: `${client.i18n.get(language, "modals", "d_field_username")}`, value: `${ticketMCnameDonacija}` })
@@ -592,7 +613,7 @@ module.exports = {
                 `${
                   (client.i18n.get(language, "tickets", "ticket_opened"),
                   {
-                    channel: posChannelD,
+                    channel: channel,
                   })
                 }`,
               );
