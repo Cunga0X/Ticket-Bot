@@ -18,12 +18,13 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-
+<div align="center">
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
+</div>
 
 <!-- PROJECT LOGO -->
 <br />
@@ -97,7 +98,7 @@ This bot offers you two options for using it. You can either add it to your serv
 
 ### Prerequisites
 
-1. Clone this project to your local machine using `git clone https://github.com/your-username/your-project-name.git`
+1. Clone this project to your local machine using `git clone https://github.com/Cunga0X/Ticket-Bot.git`
 2. Use `npm i` to install all the required packages and dependencies
 
 ### Installation
