@@ -1,11 +1,14 @@
 const { Client } = require("discord.js");
 const ms = require("ms");
 const mongoose = require("mongoose");
-const { MONGO_DB, TICKETS_HISTORY, PORT } = require("../../config.js");
+const config = require("../../config.js");
 const chalk = require("chalk");
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const axios = require("axios");
+
+const { version: current } = require("../../package.json");
 
 module.exports = {
   name: "ready",
@@ -16,7 +19,7 @@ module.exports = {
   async execute(client) {
     const { user, ws } = client;
 
-    if (TICKETS_HISTORY === "web") {
+    if (config.TICKETS_HISTORY === "web") {
       let app = express();
       app.use("/History", express.static(path.join(__dirname, "../../History")));
 
@@ -34,7 +37,7 @@ module.exports = {
         });
       });
 
-      app.listen(PORT);
+      app.listen(config.PORT);
       console.log(chalk.green("Ticket's server Online"));
     }
 
@@ -45,11 +48,11 @@ module.exports = {
       });
     }, ms("5s"));
 
-    if (!MONGO_DB) return;
+    if (!config.MONGO_DB) return;
 
     mongoose.set("strictQuery", false);
     mongoose
-      .connect(MONGO_DB, {
+      .connect(config.MONGO_DB, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       })
@@ -60,5 +63,27 @@ module.exports = {
       .catch((err) => {
         console.error(chalk.red(`Failed to connect to MongoDB: ${err}`));
       });
+    if (config.UPDATE_NOTICE == false) return;
+    const semver = await import("semver");
+
+    const data = await axios.get("https://api.github.com/repos/Cunga0X/Ticket-Bot/releases").catch((error) => {
+      console.error(error);
+    });
+
+    const latest = semver.coerce(data.data[0].tag_name);
+
+    if (!semver.valid(latest)) {
+      console.log("You are up to date");
+    }
+
+    if (semver.lt(current, latest)) {
+      console.log(chalk.yellow(`There is an update available for Discord Tickets (${current} -> ${latest})`));
+
+      const linkUrl = "https://github.com/Cunga0X/Ticket-Bot/releases";
+
+      const lines = [`You are currently using ${current}, the latest is ${latest}.`, `Download "${latest}" from the GitHub releases page: ${linkUrl}`];
+
+      console.log(chalk.yellow(lines.join("\n")));
+    }
   },
 };

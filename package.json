@@ -1,6 +1,18 @@
 {
+  "name": "ticketbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "release": "standard-version"
+  },
+  "keywords": [],
+  "author": "Cunga0X",
   "dependencies": {
     "ascii-table": "^0.0.9",
+    "axios": "^1.4.0",
+    "boxen": "^7.1.0",
     "chalk": "^4.1.2",
     "discord-html-transcripts": "^3.1.4",
     "discord.js": "^14.11.0",
@@ -9,12 +21,15 @@
     "fs": "^0.0.1-security",
     "glob": "^7.2.0",
     "http": "^0.0.1-security",
+    "leekslazylogger": "^5.0.1",
     "locale-parser": "^1.1.3",
     "mongoose": "^5.13.14",
     "ms": "^2.1.3",
     "node-fetch": "^3.3.1",
     "os": "^0.1.2",
     "path": "^0.12.7",
+    "semver": "^7.5.1",
+    "terminal-link": "^3.0.0",
     "url": "^0.11.0"
   }
 }

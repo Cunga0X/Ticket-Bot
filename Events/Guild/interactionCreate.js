@@ -146,7 +146,7 @@ module.exports = {
             unlock.addComponents(
               new ButtonBuilder()
                 .setCustomId("lock")
-                .setLabel(`${client.i18n.get(language, "tickets", "lock_label")}`)
+                .setLabel(`${client.i18n.get(language, "tickets", "locked_label")}`)
                 .setStyle("Secondary")
                 .setEmoji("🔒"),
             );

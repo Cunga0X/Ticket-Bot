@@ -36,3 +36,7 @@ closed: "closed-%{user}"
 reopened: "reopened-%{user}"
 claim: "Claim"
 claimed: "🎟️ ・ Your ticked will be resolved by `%{user}`"
+
+##Statistics
+no_stats_data: "⚠️ ・ Error, Can't find any data"
+no_role: "⚠️ ・ You are not member of Staff"
