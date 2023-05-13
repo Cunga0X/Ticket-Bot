@@ -28,8 +28,8 @@ support_manager_on: "✅ ・ Support-Tickets Turned **`On`**"
 support_manager_off: "✅ ・ Support-Tickets Turned **`Off`**"
 
 ##Lock/Unlock Button
-ticket_locked: "🔒 ・ Prijava zaklenjena, odstranjena bo po pregledu"
-ticket_unlocked: "🔓 ・ Prijava odklenjena"
+ticket_locked: "🔒 ・ Prijava je zaprl `%{user}`, odstranjena bo po pregledu"
+ticket_unlocked: "🔓 ・ `%{user}` je ponovno odprl prijavo"
 unlock_label: "Odkleni"
 locked_label: "Zakleni"
 closed: "closed-%{user}"

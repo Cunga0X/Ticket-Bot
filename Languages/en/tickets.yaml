@@ -28,8 +28,8 @@ support_manager_on: "✅ ・ Support-Tickets Turned **`On`**"
 support_manager_off: "✅ ・ Support-Tickets Turned **`Off`**"
 
 ##Lock/Unlock
-ticket_locked: "🔒 ・ Ticket closed, it will be removed after review"
-ticket_unlocked: "🔓 ・ Ticket unlocked"
+ticket_locked: "🔒 ・ Ticket was closed by `%{user}`, it will be removed after review"
+ticket_unlocked: "🔓 ・ Ticket reopened by `%{user}`"
 unlock_label: "Unlock"
 locked_label: "Lock"
 closed: "closed-%{user}"

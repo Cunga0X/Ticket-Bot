@@ -96,7 +96,11 @@ module.exports = {
                 deny: [PermissionsBitField.Flags.SendMessages],
               },
             ]);
-            const embed = new EmbedBuilder().setColor("Yellow").setDescription(`${client.i18n.get(language, "tickets", "ticket_locked")}`);
+            const embed = new EmbedBuilder().setColor("Yellow").setDescription(
+              `${client.i18n.get(language, "tickets", "ticket_locked", {
+                user: interaction.user.username,
+              })}`,
+            );
             const unlock = new ActionRowBuilder();
             unlock.addComponents(
               new ButtonBuilder()
@@ -141,7 +145,11 @@ module.exports = {
                 allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.SendMessages],
               },
             ]);
-            const embed = new EmbedBuilder().setColor("Yellow").setDescription(`${client.i18n.get(language, "tickets", "ticket_unlocked")}`);
+            const embed = new EmbedBuilder().setColor("Yellow").setDescription(
+              `${client.i18n.get(language, "tickets", "ticket_unlocked", {
+                user: interaction.user.username,
+              })}`,
+            );
             const unlock = new ActionRowBuilder();
             unlock.addComponents(
               new ButtonBuilder()
