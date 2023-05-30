@@ -12,6 +12,7 @@ module.exports = {
    */
   async execute(message, client) {
     const { author, guild } = message;
+    if (author.bot) return;
     Ticket.findOne({ Guild: guild.id, Ticket: "support-ticket-message" }, async (err, data) => {
       const supportRole = data.SupportRole;
       const channels = ["bug-", "vprašanje-", "donacija-", "prijava-", "odprto-", "zaprto-", "zaprl-", "odprl-", "closed-", "reopened-", "question-", "report-", "donation-"];
